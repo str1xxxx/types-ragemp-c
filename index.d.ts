@@ -43,6 +43,7 @@ interface Mp {
 	Vector3: Vector3Mp;
 	vehicles: VehicleMpPool;
 	voiceChat: VoiceChatMp;
+	rpc: Rpc
 }
 
 interface GameMp {
@@ -100,6 +101,49 @@ interface GuiMp {
 // -------------------------------------------------------------------------
 // Entity MP types
 // -------------------------------------------------------------------------
+
+export interface Player {
+    call: (eventName: string, args?: any[]) => void;
+    [property: string]: any;
+}
+
+export interface Browser {
+    execute: (code: string) => void;
+    [property: string]: any;
+}
+
+export interface ProcedureListenerInfo {
+    environment: string;
+    id?: string;
+    player?: Player;
+}
+
+export interface CallOptions {
+    timeout?: number;
+    noRet?: boolean;
+}
+
+export type ProcedureListener = (args: any, info: ProcedureListenerInfo) => any;
+declare class Rpc {
+    register(name: string, cb: ProcedureListener): Function;
+    unregister(name: string): void;
+    call<T = any>(name: string, args?: any, options?: CallOptions): Promise<T>;
+    callServer<T = any>(name: string, args?: any, options?: CallOptions): Promise<T>;
+    callClient<T = any>(player: PlayerMp, name: string, args?: any, options?: CallOptions): Promise<T>;
+    callClient<T = any>(name: string, args?: any, options?: CallOptions): Promise<T>;
+    callBrowsers<T = any>(player: PlayerMp, name: string, args?: any, options?: CallOptions): Promise<T>;
+    callBrowser<T = any>(browser: Browser, name: string, args?: any, options?: CallOptions): Promise<T>;
+
+    on(name: string, cb: ProcedureListener): Function;
+    off(name: string, cb: ProcedureListener): void;
+    trigger(name: string, args?: any): void;
+    triggerServer(name: string, args?: any): void;
+    etriggerClient(player: PlayerMp, name: string, args?: any): void;
+    triggerClient(name: string, args?: any): void;
+    triggerBrowsers(player: PlayerMp, name: string, args?: any): void;
+    triggerBrowsers(name: string, args?: any): void;
+    triggerBrowser(browser: Browser, name: string, args?: any): void;
+}
 
 interface BlipMp {
 	dimension: number;
