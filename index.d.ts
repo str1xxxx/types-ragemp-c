@@ -130,6 +130,10 @@ declare abstract class BlipMp {
     readonly remoteId: number;
     readonly type: string;
 
+    /**
+     * Подписывает блип для локализации
+     */
+    subscribeBlip(blip: BlipMp, localeString: string): void
     addTextComponentSubstringName(): void;
     destroy(): void;
     doesExist(): boolean;
